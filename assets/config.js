@@ -6,5 +6,5 @@ export const CONFIG = {
   API_BASE: '',                // '' when the site and /api are on the same Vercel domain
   CLIQ_ALIAS: '00962799146795', // CliQ alias (mobile number) shown to customers
   CLIQ_BANK: 'Zain Cash',
-  SUPPORT_WHATSAPP: '+962 7X XXX XXXX',
+  SUPPORT_WHATSAPP: '+962 79 914 6795',
 };

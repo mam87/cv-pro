@@ -299,7 +299,7 @@ function renderCheckout() {
         <label class="f"><span>اسم المحوِّل</span><input type="text" id="cliq-name"></label>
         <button class="btn primary" id="btn-cliq-send">أرسلت الحوالة</button>
       </div>
-      <p class="muted">الدفع آمن عبر بوابة معتمدة. لا نرى بيانات بطاقتك. الملف يُنشأ فوراً بعد تأكيد البنك.</p>`;
+      <p class="muted">الدفع آمن عبر بوابة معتمدة. لا نرى بيانات بطاقتك. الملف يُنشأ فوراً بعد تأكيد البنك. <a href="legal.html#refund" target="_blank">سياسة الاسترجاع</a></p>`;
   }
   box.innerHTML = `<div class="pkgs">${pk}</div>${action}`;
   wireCheckout(box);
