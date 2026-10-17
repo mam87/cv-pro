@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CV Pro Builder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="index.html"><i></i>CV Pro</a>
+    <nav id="nav"></nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="mobile-tabs" role="tablist">
+    <button class="btn" role="tab" id="tab-form" aria-selected="true" data-tab="form">تعبئة البيانات</button>
+    <button class="btn" role="tab" id="tab-prev" aria-selected="false" data-tab="preview">المعاينة والتقييم</button>
+  </div>
+
+  <main class="builder">
+    <section data-pane="form" id="form-col" aria-label="نموذج السيرة"></section>
+
+    <aside data-pane="preview" class="preview-col" aria-label="المعاينة">
+      <div class="score" id="score">
+        <div class="ring" id="ring"><span id="ring-v">0</span></div>
+        <div>
+          <h3>تقييم السيرة حسب معايير التوظيف</h3>
+          <ul id="tips"></ul>
+        </div>
+      </div>
+      <div class="sheet-frame" id="sheet-frame">
+        <div class="sheet-scale" id="sheet-scale">
+          <iframe id="sheet" title="معاينة السيرة الذاتية" sandbox="allow-same-origin"></iframe>
+        </div>
+      </div>
+      <p class="muted">المعاينة عليها علامة مائية. الملف النهائي بدقة طباعة عالية وبدون علامة، ويُنشأ بعد تأكيد الدفع.</p>
+    </aside>
+  </main>
+</div>
+
+<script type="module" src="assets/builder.js"></script>
+</body>
+</html>
