@@ -293,9 +293,9 @@ function renderCheckout() {
         <button class="btn primary" id="btn-card">ادفع ${fmtUSD(p.price_usd_cents)} بالبطاقة (فيزا / ماستركارد)</button>
         <button class="btn" id="btn-cliq">حوالة CliQ — ${fmtJOD(p.price_jod_fils)}</button></div>
       <div class="panel" id="cliq-panel" hidden>
-        <div>حوّل <b>${fmtJOD(p.price_jod_fils)}</b> عبر CliQ إلى الاسم المستعار:</div>
+        <div>حوّل <b>${fmtJOD(p.price_jod_fils)}</b> عبر CliQ إلى الرقم التالي:</div>
         <div class="copyline"><code id="alias">${esc(CONFIG.CLIQ_ALIAS)}</code><button class="btn sm" data-copy="alias">نسخ</button><span class="muted">${esc(CONFIG.CLIQ_BANK)}</span></div>
-        <label class="f"><span>رقم مرجع الحوالة (من تطبيق البنك)</span><input type="text" id="cliq-ref" class="ltr"></label>
+        <label class="f"><span>رقم مرجع العملية (Reference) من تطبيق البنك أو المحفظة — وليس رقم الهاتف</span><input type="text" id="cliq-ref" class="ltr"></label>
         <label class="f"><span>اسم المحوِّل</span><input type="text" id="cliq-name"></label>
         <button class="btn primary" id="btn-cliq-send">أرسلت الحوالة</button>
       </div>
@@ -337,6 +337,8 @@ function wireCheckout(box) {
     if (!readyToPay()) return;
     const ref = $('#cliq-ref').value.trim();
     if (ref.length < 4) return toast('اكتب رقم مرجع الحوالة كما يظهر في تطبيق البنك.');
+    const digits = (x) => x.replace(/\D/g, '').replace(/^(00962|962|0)/, '');
+    if (digits(ref) && digits(ref) === digits(CONFIG.CLIQ_ALIAS)) return toast('هذا رقم المستلم. اكتب رقم مرجع العملية من إيصال الحوالة.');
     await saveRemote();
     const sb = await supa();
     const { data, error } = await sb.from('manual_payments').insert({ user_id: user.id, cv_id: state.cvId, package_code: selectedPkg, reference: ref, payer_name: $('#cliq-name').value.trim() }).select().single();
