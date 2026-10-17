@@ -23,7 +23,7 @@ export async function getUser() {
 export async function signInEmail(email) {
   const sb = await supa();
   const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.href } });
-  if (error) throw error;
+  if (error) throw new Error(/rate limit/i.test(error.message) ? 'أُرسلت روابط دخول كثيرة خلال وقت قصير. انتظر قليلاً ثم حاول مرة أخرى.' : error.message);
 }
 export async function signInGoogle() {
   const sb = await supa();

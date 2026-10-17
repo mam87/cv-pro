@@ -7,5 +7,6 @@ export const CONFIG = {
   CLIQ_ALIAS: '00962799146795', // CliQ alias (mobile number) shown to customers
   CLIQ_BANK: 'Zain Cash',
   PAYPAL_ENABLED: true,        // PayPal keys are set in Vercel (PAYPAL_ENV decides sandbox or live)
+  GOOGLE_LOGIN: false,         // turn on after enabling the Google provider in Supabase Auth
   SUPPORT_WHATSAPP: '+962 79 914 6795',
 };

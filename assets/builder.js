@@ -279,7 +279,7 @@ function renderCheckout() {
     action = `<div class="panel"><b>سجّل الدخول لحفظ سيرتك والدفع</b>
       <span class="muted">بياناتك محفوظة على هذا الجهاز، وستنتقل لحسابك بعد الدخول.</span>
       <div class="copyline"><input type="email" id="login-email" class="ltr" placeholder="name@gmail.com" style="flex:1;min-width:180px"><button class="btn primary" id="btn-magic">أرسل رابط الدخول</button></div>
-      <button class="btn" id="btn-google">الدخول بحساب Google</button></div>`;
+      ${CONFIG.GOOGLE_LOGIN ? '<button class="btn" id="btn-google">الدخول بحساب Google</button>' : ''}</div>`;
   } else if (order) {
     const op = pkgMap[order.package_code] || p;
     const until = new Date(order.unlock_until).toLocaleDateString('ar-JO', { day: 'numeric', month: 'long', year: 'numeric' });
