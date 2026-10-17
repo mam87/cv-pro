@@ -38,7 +38,7 @@ create trigger on_auth_user_created after insert on auth.users
 
 -- users may NOT promote themselves
 create or replace function public.protect_role() returns trigger
-language plpgsql as $$
+language plpgsql set search_path = public as $$
 begin
   if new.role is distinct from old.role and current_user not in ('postgres','supabase_admin','service_role') and not public.is_admin() then
     raise exception 'role change not allowed';
@@ -80,7 +80,7 @@ create table if not exists public.cvs (
 );
 create index if not exists cvs_user_idx on public.cvs(user_id);
 
-create or replace function public.touch_updated_at() returns trigger language plpgsql as $$
+create or replace function public.touch_updated_at() returns trigger language plpgsql set search_path = public as $$
 begin new.updated_at = now(); return new; end $$;
 drop trigger if exists cvs_touch on public.cvs;
 create trigger cvs_touch before update on public.cvs for each row execute function public.touch_updated_at();
@@ -121,6 +121,8 @@ create table if not exists public.manual_payments (
   reviewed_at timestamptz,
   reviewed_by uuid
 );
+-- one CliQ reference can be claimed only once
+create unique index if not exists manual_payments_reference_uniq on public.manual_payments (lower(reference));
 
 -- ---------- downloads log ----------
 create table if not exists public.downloads (
@@ -197,6 +199,13 @@ language sql stable security definer set search_path = public as $$
   from public.orders where status = 'paid' and public.is_admin()
   group by 1,2,3 order by 1 desc limit 120;
 $$;
+
+-- Lock down who may call the security-definer functions through the API
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
+revoke execute on function public.admin_review_manual(uuid, boolean) from public, anon;
+revoke execute on function public.admin_revenue() from public, anon;
+grant execute on function public.admin_review_manual(uuid, boolean) to authenticated;
+grant execute on function public.admin_revenue() to authenticated;
 
 -- =====================================================================
 -- Storage: private bucket for generated files (no client policies => server only)
