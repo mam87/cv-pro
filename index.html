@@ -51,7 +51,7 @@
     <div class="feat"><h3>قالب متوافق مع ATS</h3><p>عمود واحد وعناوين قياسية يقرؤها نظام الفرز في مواقع مثل بيت.كوم ولينكدإن وأنظمة المستشفيات والشركات الكبرى.</p></div>
     <div class="feat"><h3>قالب طبي متخصص</h3><p>رقم الترخيص المهني والشهادات المعتمدة في المقدمة، كما يتوقعها مسؤول التوظيف في القطاع الصحي بالخليج.</p></div>
     <div class="feat"><h3>Word قابل للتعديل</h3><p>في باقة «احترافي» تحصل على ملف Word تعدّل عليه لاحقاً بنفسك، إضافة إلى PDF جاهز للطباعة على A4.</p></div>
-    <div class="feat"><h3>ادفع فقط عندما تعجبك</h3><p>جرّب واكتب وشاهد المعاينة مجاناً. تدفع عند التحميل فقط، بالبطاقة أو بحوالة CliQ.</p></div>
+    <div class="feat"><h3>ادفع فقط عندما تعجبك</h3><p>جرّب واكتب وشاهد المعاينة مجاناً. تدفع عند التحميل فقط، بحوالة CliQ من أي بنك أو محفظة أردنية.</p></div>
   </section>
 
   <h2 class="sec-h" id="pricing">الأسعار</h2>
@@ -73,7 +73,7 @@
   const pk = await loadPackages();
   document.getElementById('pkgs').innerHTML = pk.map((p) => `
     <div class="pkg">${p.code === 'pro' ? '<span class="badge">الأكثر طلباً</span>' : ''}<b>${p.name_ar}</b>
-      <div class="price">${fmtJOD(p.price_jod_fils)} <small>أو $${p.price_usd_cents / 100}</small></div>
+      <div class="price">${fmtJOD(p.price_jod_fils)}${pk.some((x) => x.ls_variant_id) ? ` <small>أو $${p.price_usd_cents / 100}</small>` : ''}</div>
       <ul><li>${p.formats.includes('docx') ? 'PDF + Word قابل للتعديل' : 'PDF عالي الدقة'}</li><li>تعديل مجاني ${p.edit_days} يوماً</li><li>كل القوالب، عربي وإنجليزي</li>${p.ai_enabled ? '<li>مساعد ذكي للصياغة + رسالة تغطية</li>' : ''}</ul>
       <a class="btn ${p.code === 'pro' ? 'primary' : ''}" href="builder.html">ابدأ</a></div>`).join('');
 </script>

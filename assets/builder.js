@@ -261,11 +261,12 @@ const FEAT = (p) => [
 function renderCheckout() {
   const old = $('#checkout'); if (!old) return;
   const box = old.cloneNode(false); old.replaceWith(box); // drop old listeners
+  const cardOn = packages.some((x) => x.ls_variant_id); // card button appears only once a card provider is configured
   const pk = packages.map((p) => `
     <label class="pkg">${p.code === 'pro' ? '<span class="badge">الأكثر طلباً</span>' : ''}
       <input type="radio" name="pkg" value="${p.code}" ${selectedPkg === p.code ? 'checked' : ''}>
       <b>${esc(p.name_ar)}</b>
-      <div class="price">${fmtJOD(p.price_jod_fils)} <small>أو ${fmtUSD(p.price_usd_cents)} بالبطاقة</small></div>
+      <div class="price">${fmtJOD(p.price_jod_fils)}${cardOn ? ` <small>أو ${fmtUSD(p.price_usd_cents)} بالبطاقة</small>` : ''}</div>
       <ul>${FEAT(p).map((f) => `<li>${f}</li>`).join('')}</ul>
     </label>`).join('');
 
@@ -289,17 +290,17 @@ function renderCheckout() {
   } else if (pendingManual) {
     action = `<div class="notice warn">استلمنا طلب الحوالة (المرجع ${esc(pendingManual.reference)}). يُفعَّل التحميل خلال ساعات العمل بعد مطابقة المبلغ، وتصلك رسالة.</div>`;
   } else {
-    action = `<div class="pay-row">
+    action = `${cardOn ? `<div class="pay-row">
         <button class="btn primary" id="btn-card">ادفع ${fmtUSD(p.price_usd_cents)} بالبطاقة (فيزا / ماستركارد)</button>
-        <button class="btn" id="btn-cliq">حوالة CliQ — ${fmtJOD(p.price_jod_fils)}</button></div>
-      <div class="panel" id="cliq-panel" hidden>
+        <button class="btn" id="btn-cliq">حوالة CliQ — ${fmtJOD(p.price_jod_fils)}</button></div>` : '<b>الدفع عبر CliQ (أي بنك أو محفظة أردنية)</b>'}
+      <div class="panel" id="cliq-panel" ${cardOn ? 'hidden' : ''}>
         <div>حوّل <b>${fmtJOD(p.price_jod_fils)}</b> عبر CliQ إلى الرقم التالي:</div>
         <div class="copyline"><code id="alias">${esc(CONFIG.CLIQ_ALIAS)}</code><button class="btn sm" data-copy="alias">نسخ</button><span class="muted">${esc(CONFIG.CLIQ_BANK)}</span></div>
         <label class="f"><span>رقم مرجع العملية (Reference) من تطبيق البنك أو المحفظة — وليس رقم الهاتف</span><input type="text" id="cliq-ref" class="ltr"></label>
         <label class="f"><span>اسم المحوِّل</span><input type="text" id="cliq-name"></label>
         <button class="btn primary" id="btn-cliq-send">أرسلت الحوالة</button>
       </div>
-      <p class="muted">الدفع آمن عبر بوابة معتمدة. لا نرى بيانات بطاقتك. الملف يُنشأ فوراً بعد تأكيد البنك. <a href="legal.html#refund" target="_blank">سياسة الاسترجاع</a></p>`;
+      <p class="muted">${cardOn ? 'الدفع بالبطاقة آمن عبر بوابة معتمدة ولا نرى بيانات بطاقتك. ' : ''}حوالات CliQ تُفعَّل بعد مطابقتها، عادةً خلال ساعات. <a href="legal.html#refund" target="_blank">سياسة الاسترجاع</a></p>`;
   }
   box.innerHTML = `<div class="pkgs">${pk}</div>${action}`;
   wireCheckout(box);
