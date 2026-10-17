@@ -26,7 +26,7 @@ async function boot() {
     </tbody></table></div>
     <h2>مدفوعاتي</h2>
     <div class="tbl"><table><thead><tr><th>التاريخ</th><th>الباقة</th><th>الطريقة</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody>
-      ${(orders || []).map((o) => `<tr><td>${d(o.paid_at)}</td><td>${esc(o.package_code)}</td><td>${o.provider === 'cliq' ? 'CliQ' : 'بطاقة'}</td><td class="num">${money(o.amount_cents, o.currency)}</td><td><span class="pill ${o.status === 'paid' ? 'ok' : 'warn'}">${o.status === 'paid' ? 'مدفوع' : 'مسترد'}</span></td></tr>`).join('') || '<tr><td colspan="5" class="muted">لا مدفوعات بعد.</td></tr>'}
+      ${(orders || []).map((o) => `<tr><td>${d(o.paid_at)}</td><td>${esc(o.package_code)}</td><td>${{ cliq: 'CliQ', paypal: 'PayPal' }[o.provider] || 'بطاقة'}</td><td class="num">${money(o.amount_cents, o.currency)}</td><td><span class="pill ${o.status === 'paid' ? 'ok' : 'warn'}">${o.status === 'paid' ? 'مدفوع' : 'مسترد'}</span></td></tr>`).join('') || '<tr><td colspan="5" class="muted">لا مدفوعات بعد.</td></tr>'}
     </tbody></table></div>
     <div id="admin"></div>`;
 

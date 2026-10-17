@@ -36,7 +36,14 @@
 3. Authentication → URL Configuration: ضع رابط موقعك في Site URL و Redirect URLs (مثل `https://cvpro.vercel.app/**`).
 4. من Project Settings → API انسخ: Project URL و `anon` key و `service_role` key.
 
-### 2) Lemon Squeezy (الدفع بالبطاقة)
+### 2أ) PayPal (الدفع بالبطاقة — المستخدم حالياً)
+1. حساب PayPal **Business** باسمك، ثم developer.paypal.com ← Apps & Credentials ← Create App.
+2. انسخ Client ID و Secret إلى Vercel: `PAYPAL_CLIENT_ID` و `PAYPAL_SECRET` و `PAYPAL_ENV=sandbox` للتجربة.
+3. في `assets/config.js` اجعل `PAYPAL_ENABLED: true`.
+4. بعد نجاح التجربة: انسخ مفاتيح **Live** وغيّر `PAYPAL_ENV=live` ثم Redeploy.
+السيرفر هو من يسحب المبلغ من PayPal ويتحقق من المبلغ والعملة والمستخدم والباقة قبل فتح التحميل (`api/paypal-capture.js`).
+
+### 2ب) Lemon Squeezy (بديل، غير مفعّل)
 1. أنشئ متجراً وفعّل وسيلة استلام الأرباح المتاحة لحسابك (تحقق من الدول المدعومة وقت التسجيل).
 2. أنشئ منتجاً واحداً «CV Pro» بثلاثة Variants: Basic ‏$5، Pro ‏$9، Premium ‏$19.
 3. انسخ رقم كل Variant وضعه في لوحة الإدارة بالموقع (أو SQL):

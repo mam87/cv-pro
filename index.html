@@ -69,11 +69,12 @@
 
 <script type="module">
   import { loadPackages } from './assets/core.js';
+  import { CONFIG } from './assets/config.js';
   const fmtJOD = (f) => `${+(f / 1000).toFixed(2)} د.أ`;
   const pk = await loadPackages();
   document.getElementById('pkgs').innerHTML = pk.map((p) => `
     <div class="pkg">${p.code === 'pro' ? '<span class="badge">الأكثر طلباً</span>' : ''}<b>${p.name_ar}</b>
-      <div class="price">${fmtJOD(p.price_jod_fils)}${pk.some((x) => x.ls_variant_id) ? ` <small>أو $${p.price_usd_cents / 100}</small>` : ''}</div>
+      <div class="price">${fmtJOD(p.price_jod_fils)}${(CONFIG.PAYPAL_ENABLED || pk.some((x) => x.ls_variant_id)) ? ` <small>أو $${p.price_usd_cents / 100}</small>` : ''}</div>
       <ul><li>${p.formats.includes('docx') ? 'PDF + Word قابل للتعديل' : 'PDF عالي الدقة'}</li><li>تعديل مجاني ${p.edit_days} يوماً</li><li>كل القوالب، عربي وإنجليزي</li>${p.ai_enabled ? '<li>مساعد ذكي للصياغة + رسالة تغطية</li>' : ''}</ul>
       <a class="btn ${p.code === 'pro' ? 'primary' : ''}" href="builder.html">ابدأ</a></div>`).join('');
 </script>

@@ -45,6 +45,10 @@ export const ERR = {
   ai_limit: 'استهلكت عدد طلبات المساعد الذكي في باقتك.',
   ai_not_configured: 'المساعد الذكي غير مفعّل على هذا الموقع بعد.',
   network: 'تعذّر الاتصال. تأكد من الإنترنت وحاول مرة أخرى.',
+  card_declined: 'رفض البنك البطاقة. جرّب بطاقة أخرى أو ادفع بحوالة CliQ.',
+  payment_not_completed: 'لم تكتمل عملية الدفع ولم يُخصم منك شيء. حاول مرة أخرى.',
+  payment_mismatch: 'بيانات الدفع لا تطابق الطلب. تواصل معنا وأرسل رقم العملية من PayPal.',
+  bad_order: 'رابط العودة من PayPal غير صالح.',
 };
 
 export async function api(path, body) {

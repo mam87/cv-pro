@@ -6,5 +6,6 @@ export const CONFIG = {
   API_BASE: '',                // '' when the site and /api are on the same Vercel domain
   CLIQ_ALIAS: '00962799146795', // CliQ alias (mobile number) shown to customers
   CLIQ_BANK: 'Zain Cash',
+  PAYPAL_ENABLED: false,       // turn on after PAYPAL_CLIENT_ID / PAYPAL_SECRET are set in Vercel
   SUPPORT_WHATSAPP: '+962 79 914 6795',
 };

@@ -91,7 +91,7 @@ create table if not exists public.orders (
   user_id uuid not null references auth.users(id) on delete cascade,
   cv_id uuid not null references public.cvs(id) on delete cascade,
   package_code text not null references public.packages(code),
-  provider text not null check (provider in ('lemonsqueezy','cliq','manual')),
+  provider text not null check (provider in ('lemonsqueezy','cliq','manual','paypal')),
   provider_order_id text not null,
   status text not null check (status in ('paid','refunded')),
   amount_cents int not null,

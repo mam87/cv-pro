@@ -261,7 +261,7 @@ const FEAT = (p) => [
 function renderCheckout() {
   const old = $('#checkout'); if (!old) return;
   const box = old.cloneNode(false); old.replaceWith(box); // drop old listeners
-  const cardOn = packages.some((x) => x.ls_variant_id); // card button appears only once a card provider is configured
+  const cardOn = CONFIG.PAYPAL_ENABLED || packages.some((x) => x.ls_variant_id); // card button appears only once a card provider is configured
   const pk = packages.map((p) => `
     <label class="pkg">${p.code === 'pro' ? '<span class="badge">الأكثر طلباً</span>' : ''}
       <input type="radio" name="pkg" value="${p.code}" ${selectedPkg === p.code ? 'checked' : ''}>
@@ -291,7 +291,7 @@ function renderCheckout() {
     action = `<div class="notice warn">استلمنا طلب الحوالة (المرجع ${esc(pendingManual.reference)}). يُفعَّل التحميل خلال ساعات العمل بعد مطابقة المبلغ، وتصلك رسالة.</div>`;
   } else {
     action = `${cardOn ? `<div class="pay-row">
-        <button class="btn primary" id="btn-card">ادفع ${fmtUSD(p.price_usd_cents)} بالبطاقة (فيزا / ماستركارد)</button>
+        <button class="btn primary" id="btn-card">ادفع ${fmtUSD(p.price_usd_cents)} بالبطاقة أو PayPal</button>
         <button class="btn" id="btn-cliq">حوالة CliQ — ${fmtJOD(p.price_jod_fils)}</button></div>` : '<b>الدفع عبر CliQ (أي بنك أو محفظة أردنية)</b>'}
       <div class="panel" id="cliq-panel" ${cardOn ? 'hidden' : ''}>
         <div>حوّل <b>${fmtJOD(p.price_jod_fils)}</b> عبر CliQ إلى الرقم التالي:</div>
@@ -331,7 +331,7 @@ function wireCheckout(box) {
   $('#btn-card', box)?.addEventListener('click', async (e) => {
     if (!readyToPay()) return;
     e.target.disabled = true; e.target.textContent = 'جارٍ فتح صفحة الدفع…';
-    try { await saveRemote(); const { url } = await api('checkout', { cv_id: state.cvId, package: selectedPkg }); location.href = url; }
+    try { await saveRemote(); const { url } = await api(CONFIG.PAYPAL_ENABLED ? 'paypal-create' : 'checkout', { cv_id: state.cvId, package: selectedPkg }); location.href = url; }
     catch (err) { toast(err.message); renderCheckout(); }
   });
   $('#btn-cliq-send', box)?.addEventListener('click', async () => {
@@ -393,6 +393,16 @@ async function waitForPayment() {
   toast(order ? 'تم تأكيد الدفع. يمكنك التحميل الآن.' : 'لم يصل التأكيد بعد. سيظهر زر التحميل تلقائياً عند وصوله؛ أعد فتح الصفحة بعد دقائق.', 7000);
 }
 
+async function capturePayPal(token) {
+  $('#step-checkout').open = true;
+  const box = $('#checkout');
+  box?.insertAdjacentHTML('afterbegin', '<div class="notice warn">نؤكد الدفع مع PayPal… لا تغلق الصفحة.</div>');
+  try { await api('paypal-capture', { order_id: token }); await refreshOrder(); toast('تم الدفع بنجاح. يمكنك التحميل الآن.', 6000); }
+  catch (err) { toast(err.message, 8000); }
+  history.replaceState(null, '', `?cv=${state.cvId}`);
+  renderCheckout();
+}
+
 // ---------------- nav ----------------
 function renderNav() {
   $('#nav').innerHTML = DEMO ? '<span class="muted">نسخة تجريبية</span>'
@@ -426,5 +436,7 @@ async function boot() {
   renderNav(); renderForm(); bind(); updatePreview(); updateScore(); showPane('form');
   if (user && !state.cvId) saveRemote();
   if (params.get('paid') === '1' && !order) waitForPayment();
+  if (params.get('pp') === '1' && params.get('token') && user) capturePayPal(params.get('token'));
+  if (params.get('pp') === 'cancel') { toast('ألغيت الدفع ولم يُخصم منك شيء.'); history.replaceState(null, '', `?cv=${state.cvId}`); }
 }
 boot();

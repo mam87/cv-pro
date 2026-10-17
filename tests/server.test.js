@@ -54,3 +54,16 @@ test('docx: builds Arabic and English files', async () => {
     assert.equal(buf.subarray(0, 2).toString(), 'PK');
   }
 });
+
+import { verifyCapture, usd } from '../api/_lib/paypal.js';
+const ppPkg = { code: 'pro', price_usd_cents: 900 };
+const U = '11111111-1111-1111-1111-111111111111', CV = '22222222-2222-2222-2222-222222222222';
+const ppOrder = (o = {}) => ({ status: 'COMPLETED', purchase_units: [{ payments: { captures: [{ id: 'CAP1', status: 'COMPLETED', custom_id: `${U}|${CV}|pro`, amount: { currency_code: 'USD', value: '9.00' }, ...o }] } }] });
+
+test('paypal: usd formatting', () => assert.equal(usd(900), '9.00'));
+test('paypal: valid capture accepted', () => { const v = verifyCapture(ppOrder(), { pkg: ppPkg, userId: U }); assert.equal(v.ok, true); assert.equal(v.cvId, CV); assert.equal(v.amountCents, 900); });
+test('paypal: underpaid amount rejected', () => assert.equal(verifyCapture(ppOrder({ amount: { currency_code: 'USD', value: '1.00' } }), { pkg: ppPkg, userId: U }).code, 'wrong_amount'));
+test('paypal: other currency rejected', () => assert.equal(verifyCapture(ppOrder({ amount: { currency_code: 'EUR', value: '9.00' } }), { pkg: ppPkg, userId: U }).code, 'wrong_amount'));
+test('paypal: another user cannot claim payment', () => assert.equal(verifyCapture(ppOrder(), { pkg: ppPkg, userId: 'someone-else' }).code, 'wrong_user'));
+test('paypal: pending capture rejected', () => assert.equal(verifyCapture(ppOrder({ status: 'PENDING' }), { pkg: ppPkg, userId: U }).code, 'capture_not_completed'));
+test('paypal: package swap rejected', () => assert.equal(verifyCapture(ppOrder({ custom_id: `${U}|${CV}|basic` }), { pkg: ppPkg, userId: U }).code, 'wrong_package'));
